@@ -9,28 +9,32 @@ use Illuminate\Validation\Rule;
 class ListingController extends Controller
 {
     //all listings
-public function index(){
+    public function index()
+    {
         return view('listings.index', [
         'heading' => 'Latest Listing',
         // 'listings' => Listing::all(),
     'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(6)
     // 'listings' => Listing::latest()->filter(request(['tag', 'search']))->simplePaginate(6)
  ]);
-}
+    }
 
-//single listings
-public function show(Listing $listing){
-     return view('listings.show', [
+    //single listings
+    public function show(Listing $listing)
+    {
+        return view('listings.show', [
       'listing' => $listing
-    ]); 
-}
+    ]);
+    }
 
- // Show Create Form
-    public function create() {
+    // Show Create Form
+    public function create()
+    {
         return view('listings.create');
     }
-       // Store Listing Data
-    public function store(Request $request) {
+    // Store Listing Data
+    public function store(Request $request)
+    {
         $formFields = $request->validate([
             'title' => 'required',
             'company' => ['required', Rule::unique('listings', 'company')],
@@ -41,25 +45,27 @@ public function show(Listing $listing){
             'description' => 'required'
         ]);
 
-        if($request->hasFile('logo')) {
+        if ($request->hasFile('logo')) {
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
-        // $formFields['user_id'] = auth()->id();
+        $formFields['user_id'] = auth()->id();
 
         Listing::create($formFields);
 
         return redirect('/')->with('message', 'Listing created successfully!');
     }
-    
-     // Show Edit Form
-    public function edit(Listing $listing) {
+
+
+    // Show Edit Form
+    public function edit(Listing $listing)
+    {
         return view('listings.edit', ['listing' => $listing]);
     }
-    
-     // Update Listing Data
-    public function update(Request $request, Listing $listing) {
-           
+
+    // Update Listing Data
+    public function update(Request $request, Listing $listing)
+    {
         $formFields = $request->validate([
             'title' => 'required',
             'company' => ['required'],
@@ -70,7 +76,7 @@ public function show(Listing $listing){
             'description' => 'required'
         ]);
 
-        if($request->hasFile('logo')) {
+        if ($request->hasFile('logo')) {
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
@@ -78,9 +84,10 @@ public function show(Listing $listing){
 
         return back()->with('message', 'Listing updated successfully!');
     }
-       // Delete Listing
-    public function destroy(Listing $listing) {
-             
+    // Delete Listing
+    public function destroy(Listing $listing)
+    {
+
         // if($listing->logo && Storage::disk('public')->exists($listing->logo)) {
         //     Storage::disk('public')->delete($listing->logo);
         // }
